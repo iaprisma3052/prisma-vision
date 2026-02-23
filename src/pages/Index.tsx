@@ -1,26 +1,16 @@
-import { useState, useEffect } from "react";
 import PrismaLogo from "@/components/PrismaLogo";
 import SystemClock from "@/components/SystemClock";
 import PowerBar from "@/components/PowerBar";
 import NeuralFeed from "@/components/NeuralFeed";
-import MarketTickers from "@/components/MarketTickers";
 import DashboardCard from "@/components/DashboardCard";
-
-const mockTickers = [
-  { pair: "BTC/USDT", price: 67842.5, change: 2.34 },
-  { pair: "ETH/USDT", price: 3521.18, change: -0.87 },
-  { pair: "SOL/USDT", price: 148.92, change: 5.12 },
-  { pair: "BNB/USDT", price: 612.4, change: 1.05 },
-];
+import { PrismaControlPanel } from "@/components/PrismaControlPanel";
+import { PrismaVolumeForcePanel } from "@/components/PrismaVolumeForcePanel";
+import { useState, useEffect } from "react";
+import { Info } from "lucide-react";
 
 const Index = () => {
-  const [motorActive, setMotorActive] = useState(false);
   const [bullPower, setBullPower] = useState(72);
   const [bearPower, setBearPower] = useState(28);
-  const [systemStatus, setSystemStatus] = useState("CALIBRANDO");
-  const [accuracy, setAccuracy] = useState(94.7);
-  const [operations, setOperations] = useState(0);
-  const [profit, setProfit] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,20 +19,6 @@ const Index = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (motorActive) {
-      setSystemStatus("OPERANDO");
-      const interval = setInterval(() => {
-        setOperations((p) => p + 1);
-        setProfit((p) => p + (Math.random() * 50 - 10));
-        setAccuracy(92 + Math.random() * 6);
-      }, 4000);
-      return () => clearInterval(interval);
-    } else {
-      setSystemStatus("CALIBRANDO");
-    }
-  }, [motorActive]);
 
   return (
     <div className="min-h-screen p-4 md:p-6">
@@ -59,132 +35,60 @@ const Index = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div
-            className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-wider ${
-              motorActive
-                ? "border-neon-green/30 text-neon-green"
-                : "border-neon-gold/30 text-neon-gold"
-            }`}
-          >
-            <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-current animate-pulse-glow" />
-            Status: {systemStatus}
-          </div>
-          <SystemClock />
-        </div>
+        <SystemClock />
       </header>
+
+      {/* Info Banner */}
+      <div className="mb-6 p-4 rounded-2xl border border-border bg-card">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-orbitron text-xs font-bold mb-1 text-foreground">Como Usar:</h3>
+            <ol className="space-y-1 font-mono text-[10px] text-muted-foreground">
+              <li>1. <strong className="text-foreground">Inicie a Captura de Tela</strong> — Selecione a aba da sua corretora</li>
+              <li>2. <strong className="text-foreground">Ative a PRISMA IA</strong> — O sinal é gerado automaticamente na abertura de cada vela de 1 minuto</li>
+              <li>3. <strong className="text-foreground">Visualize os Sinais</strong> — Direção, força e volume atualizados em tempo real</li>
+            </ol>
+          </div>
+        </div>
+      </div>
 
       {/* Main Grid */}
       <div className="grid gap-4 md:grid-cols-3">
-        {/* Left Column */}
+        {/* Left Column - Control Panel */}
         <div className="space-y-4">
+          <PrismaControlPanel />
+
           <DashboardCard title="Prisma IA Power">
             <div className="space-y-4">
               <PowerBar label="Touros" value={bullPower} type="bull" />
               <PowerBar label="Ursos" value={bearPower} type="bear" />
             </div>
           </DashboardCard>
-
-          <DashboardCard title="Mercado">
-            <MarketTickers tickers={mockTickers} />
-          </DashboardCard>
         </div>
 
-        {/* Center Column */}
-        <div className="flex flex-col items-center justify-center space-y-6">
-          <DashboardCard title="Motor Neural" className="w-full text-center">
-            <div className="flex flex-col items-center gap-6 py-4">
-              <PrismaLogo size={80} />
-              <button
-                onClick={() => setMotorActive(!motorActive)}
-                className={`rounded-full px-10 py-3.5 font-orbitron text-sm font-bold uppercase tracking-widest text-primary-foreground transition-all duration-300 ${
-                  motorActive
-                    ? "bg-neon-green glow-green"
-                    : "bg-primary glow-purple"
-                }`}
-              >
-                {motorActive ? "MOTOR ATIVO" : "ATIVAR MOTOR"}
-              </button>
-              {motorActive && (
-                <p className="animate-pulse-glow font-mono text-[10px] uppercase tracking-widest text-neon-green">
-                  Processando sinais em tempo real...
-                </p>
-              )}
-            </div>
-          </DashboardCard>
+        {/* Center + Right - Signals */}
+        <div className="md:col-span-2 space-y-4">
+          <PrismaVolumeForcePanel />
 
-          <DashboardCard title="Visão Neural — Feed" className="w-full">
+          <DashboardCard title="Visão Neural — Feed">
             <NeuralFeed lines={6} />
           </DashboardCard>
         </div>
-
-        {/* Right Column */}
-        <div className="space-y-4">
-          <DashboardCard title="Performance">
-            <div className="grid grid-cols-2 gap-3">
-              <StatBlock label="Precisão" value={`${accuracy.toFixed(1)}%`} color="text-neon-green" />
-              <StatBlock label="Operações" value={String(operations)} color="text-foreground" />
-              <StatBlock
-                label="Lucro"
-                value={`${profit >= 0 ? "+" : ""}$${profit.toFixed(2)}`}
-                color={profit >= 0 ? "text-neon-green" : "text-neon-red"}
-              />
-              <StatBlock label="Motor" value={motorActive ? "ON" : "OFF"} color={motorActive ? "text-neon-green" : "text-muted-foreground"} />
-            </div>
-          </DashboardCard>
-
-          <DashboardCard title="Parâmetros do Modelo">
-            <div className="space-y-2">
-              <ParamRow label="Modelo" value="LSTM v4.2" />
-              <ParamRow label="Camadas" value="128 × 3" />
-              <ParamRow label="Dropout" value="0.25" />
-              <ParamRow label="Épocas" value="1,200" />
-              <ParamRow label="Loss" value="0.0031" />
-              <ParamRow label="Otimizador" value="Adam" />
-            </div>
-          </DashboardCard>
-
-          <DashboardCard title="Sinais Ativos">
-            <div className="space-y-2">
-              <SignalRow pair="BTC/USDT" direction="LONG" confidence={92} />
-              <SignalRow pair="ETH/USDT" direction="SHORT" confidence={78} />
-              <SignalRow pair="SOL/USDT" direction="LONG" confidence={85} />
-            </div>
-          </DashboardCard>
-        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="mt-8 text-center">
+        <p className="font-mono text-[10px] text-muted-foreground">
+          <span className="font-orbitron font-bold text-foreground">PRISMA IA</span> · Sinais na abertura da vela de 1m ·{' '}
+          <span className="text-accent">Horário de Brasília</span>
+        </p>
+        <p className="font-mono text-[9px] text-muted-foreground/60 mt-1">
+          ⚠️ Para fins educacionais. Trading envolve riscos.
+        </p>
+      </footer>
     </div>
   );
 };
-
-const StatBlock = ({ label, value, color }: { label: string; value: string; color: string }) => (
-  <div className="rounded-lg border border-border bg-secondary/50 p-3 text-center">
-    <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">{label}</p>
-    <p className={`mt-1 font-mono text-lg font-bold ${color}`}>{value}</p>
-  </div>
-);
-
-const ParamRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
-    <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
-    <span className="font-mono text-[11px] text-foreground">{value}</span>
-  </div>
-);
-
-const SignalRow = ({ pair, direction, confidence }: { pair: string; direction: string; confidence: number }) => (
-  <div className="flex items-center justify-between rounded-md border border-border bg-secondary/30 px-3 py-2">
-    <span className="font-mono text-xs text-foreground">{pair}</span>
-    <span
-      className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold ${
-        direction === "LONG"
-          ? "bg-neon-green/10 text-neon-green"
-          : "bg-neon-red/10 text-neon-red"
-      }`}
-    >
-      {direction}
-    </span>
-    <span className="font-mono text-[11px] text-muted-foreground">{confidence}%</span>
-  </div>
-);
 
 export default Index;
