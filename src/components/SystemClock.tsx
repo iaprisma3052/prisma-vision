@@ -15,7 +15,7 @@ const SystemClock = () => {
   });
 
   return (
-    <span className="font-mono text-lg tracking-widest text-foreground">
+    <span className="font-orbitron text-lg tracking-wider text-foreground font-semibold">
       {formatted}
     </span>
   );

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -34,7 +34,7 @@
     --input: 0 0% 12%;
     --ring: 263 70% 66%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     --neon-green: 160 100% 50%;
     --neon-red: 4 100% 59%;
@@ -71,7 +71,7 @@
 
 @layer utilities {
   .font-orbitron {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Sora', sans-serif;
   }
 
   .font-mono-code {

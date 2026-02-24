@@ -92,23 +92,23 @@ export function PrismaControlPanel() {
         <Settings className="w-5 h-5 text-accent" />
         <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">Painel de Controle</h3>
       </div>
-      <p className="font-mono text-[10px] text-muted-foreground">Configure e controle os sinais de trading</p>
+      <p className="font-orbitron text-[10px] text-muted-foreground">Configure e controle os sinais de trading</p>
 
       {/* Brasilia Time */}
       <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-accent" />
-          <span className="font-mono text-xs text-foreground">Brasília</span>
+          <span className="font-orbitron text-xs text-foreground">Brasília</span>
         </div>
-        <span className="font-mono text-xs font-bold text-accent">{brasiliaTime}</span>
+        <span className="font-orbitron text-xs font-bold text-accent">{brasiliaTime}</span>
       </div>
 
       {/* Countdown */}
       {isRunning && (
         <div className="p-3 rounded-xl bg-accent/10 border border-accent/20">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[10px] text-muted-foreground">Próxima vela em</span>
-            <span className="font-mono text-lg font-bold text-accent">{countdown}s</span>
+             <span className="font-orbitron text-[10px] text-muted-foreground">Próxima vela em</span>
+             <span className="font-orbitron text-lg font-bold text-accent">{countdown}s</span>
           </div>
           <div className="mt-2 w-full bg-secondary rounded-full h-1.5 overflow-hidden">
             <div
@@ -123,7 +123,7 @@ export function PrismaControlPanel() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {voiceEnabled ? <Mic className="w-4 h-4 text-accent" /> : <MicOff className="w-4 h-4 text-muted-foreground" />}
-          <Label htmlFor="voice" className="font-mono text-xs">Alertas de Voz</Label>
+          <Label htmlFor="voice" className="font-orbitron text-xs">Alertas de Voz</Label>
         </div>
         <Switch
           id="voice"
@@ -134,7 +134,7 @@ export function PrismaControlPanel() {
 
       {/* Capture Controls */}
       <div className="space-y-2">
-        <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Captura de Tela</Label>
+        <Label className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Captura de Tela</Label>
         <div className="flex gap-2">
           <Button
             onClick={handleStartCapture}
@@ -160,7 +160,7 @@ export function PrismaControlPanel() {
 
       {/* Automation Controls */}
       <div className="space-y-2">
-        <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Sinal no Fechamento da Vela (58-59s)</Label>
+        <Label className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Sinal no Fechamento da Vela (58-59s)</Label>
         <div className="flex gap-2">
           {!isRunning ? (
             <Button
@@ -185,7 +185,7 @@ export function PrismaControlPanel() {
             onClick={handleManualAnalysis}
             disabled={!isCapturing}
             variant="outline"
-            className="rounded-xl font-mono text-xs"
+            className="rounded-xl font-orbitron text-xs"
           >
             <Zap className="w-4 h-4 mr-1" />
             Analisar Agora
@@ -196,7 +196,7 @@ export function PrismaControlPanel() {
       {/* Status */}
       {isRunning && (
         <div className="p-3 rounded-xl border border-neon-green/30 bg-neon-green/5">
-          <p className="text-neon-green font-mono text-xs">
+          <p className="text-neon-green font-orbitron text-xs">
             🤖 PRISMA IA ativa — Sinal gerado entre 58-59s de cada vela de 1 minuto
           </p>
         </div>
@@ -204,7 +204,7 @@ export function PrismaControlPanel() {
 
       {error && (
         <div className="p-3 rounded-xl border border-destructive/30 bg-destructive/5">
-          <p className="text-destructive font-mono text-xs">{error}</p>
+          <p className="text-destructive font-orbitron text-xs">{error}</p>
         </div>
       )}
     </div>
