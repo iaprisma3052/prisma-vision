@@ -26,7 +26,7 @@ const PowerBar = ({ label, value, type, segments = 20 }: PowerBarProps) => {
         {Array.from({ length: segments }).map((_, i) => (
           <div
             key={i}
-            className={`h-3 flex-1 rounded-[1px] transition-all duration-300 ${
+            className={`h-3 flex-1 rounded-full transition-all duration-300 ${
               i < filledSegments
                 ? type === "bull"
                   ? "bg-neon-green shadow-[0_0_6px_hsl(160_100%_50%/0.4)]"

@@ -46,7 +46,7 @@ const Index = () => {
             <h3 className="font-orbitron text-xs font-bold mb-1 text-foreground">Como Usar:</h3>
             <ol className="space-y-1 font-mono text-[10px] text-muted-foreground">
               <li>1. <strong className="text-foreground">Inicie a Captura de Tela</strong> — Selecione a aba da sua corretora</li>
-              <li>2. <strong className="text-foreground">Ative a PRISMA IA</strong> — O sinal é gerado automaticamente na abertura de cada vela de 1 minuto</li>
+              <li>2. <strong className="text-foreground">Ative a PRISMA IA</strong> — O sinal é gerado automaticamente entre 58-59s de cada vela de 1 minuto</li>
               <li>3. <strong className="text-foreground">Visualize os Sinais</strong> — Direção, força e volume atualizados em tempo real</li>
             </ol>
           </div>
@@ -80,7 +80,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="mt-8 text-center">
         <p className="font-mono text-[10px] text-muted-foreground">
-          <span className="font-orbitron font-bold text-foreground">PRISMA IA</span> · Sinais na abertura da vela de 1m ·{' '}
+          <span className="font-orbitron font-bold text-foreground">PRISMA IA</span> · Sinais no fechamento da vela de 1m (58-59s) ·{' '}
           <span className="text-accent">Horário de Brasília</span>
         </p>
         <p className="font-mono text-[9px] text-muted-foreground/60 mt-1">

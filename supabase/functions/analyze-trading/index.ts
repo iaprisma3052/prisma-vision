@@ -15,21 +15,57 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `Você é um analista de trading profissional. Analise a imagem do gráfico de trading e retorne APENAS um JSON válido com a seguinte estrutura exata (sem markdown, sem texto extra):
+    const systemPrompt = `Você é um analista de trading profissional especializado em price action e leitura de velas. Analise a imagem do gráfico de trading aplicando TODOS os filtros abaixo antes de gerar o sinal.
+
+FILTROS OBRIGATÓRIOS DE ANÁLISE:
+
+1. **LTA/LTB (Linhas de Tendência)**:
+   - Identifique se existe uma LTA (Linha de Tendência de Alta - conectando fundos ascendentes) ou LTB (Linha de Tendência de Baixa - conectando topos descendentes).
+   - Se o preço está PRÓXIMO de uma LTA ou LTB, NÃO gere sinal imediatamente. Marque como "NEUTRO" e explique que o preço está em região de teste de linha de tendência.
+   - Rompimentos de LTA/LTB devem ser confirmados com pullback antes de gerar sinal.
+
+2. **Velas de Exaustão**:
+   - Verifique se as últimas velas mostram sinais de exaustão: corpo muito grande após tendência longa, "dupla posição" (vela que não rompe o corpo da anterior da mesma cor), martelo, shooting star, doji ou barra elefante.
+   - Se detectar exaustão após uma tendência forte, NÃO gere sinal na mesma direção da tendência. Espere confirmação de reversão ou marque como "NEUTRO".
+   - Exaustão de compra = não gerar COMPRA. Exaustão de venda = não gerar VENDA.
+
+3. **Velas de Descanso vs. Velas de Força**:
+   - Identifique se uma vela pequena contrária (ex: vela vermelha no meio de alta) é apenas uma vela de DESCANSO (corpo curto, pavios curtos) e não uma reversão real.
+   - Se após a vela de descanso vier uma vela de FORÇA (corpo grande fechando próximo da máxima/mínima), confirme a continuação da tendência.
+   - Não confunda descanso com reversão. Analise o contexto das 5-10 velas anteriores.
+
+4. **Lateralização/Consolidação**:
+   - Verifique se o mercado está lateralizado: preço oscilando entre suporte e resistência definidos, sem renovar topos ou fundos, velas alternando de cor sem direção clara.
+   - Se detectar lateralização, marque como "NEUTRO" com intensidade "FRACA" e explique que o mercado está consolidado.
+   - Sinais de lateralização: falha em renovar topos/fundos, candles pequenos alternados, preço "chato" sem continuidade.
+
+5. **Contexto Geral**:
+   - Analise as últimas 10-20 velas visíveis para entender o contexto completo.
+   - Verifique a velocidade/inclinação do movimento (muito íngreme = possível exaustão).
+   - O sinal só deve ser gerado quando houver CONFLUÊNCIA de fatores confirmando a direção.
+
+Retorne APENAS um JSON válido com esta estrutura (sem markdown, sem texto extra):
 
 {
-  "ativo": "NOME DO ATIVO (ex: EUR/USD, BTC/USDT, etc - leia do gráfico)",
-  "preco": "PREÇO ATUAL (leia do gráfico, ex: 1.08450)",
+  "ativo": "NOME DO ATIVO (leia do gráfico)",
+  "preco": "PREÇO ATUAL (leia do gráfico)",
   "forca_compradora": NUMBER de 0 a 100,
   "forca_vendedora": NUMBER de 0 a 100,
   "direcao": "COMPRA" ou "VENDA" ou "NEUTRO",
   "intensidade": "FORTE" ou "MODERADA" ou "FRACA",
   "volume_bars": [{"tipo": "compra" ou "venda", "valor": NUMBER, "tamanho": "grande" ou "medio" ou "pequeno"}],
   "setas": [{"direcao": "cima" ou "baixo", "valor": NUMBER}],
-  "resumo": "Breve resumo da análise em português"
+  "filtros_detectados": {
+    "lta_ltb_proximo": true/false,
+    "exaustao_detectada": true/false,
+    "vela_descanso": true/false,
+    "lateralizacao": true/false,
+    "tendencia_atual": "ALTA" ou "BAIXA" ou "LATERAL"
+  },
+  "resumo": "Resumo detalhado em português explicando quais filtros foram aplicados, o que foi detectado no gráfico, e por que o sinal foi gerado (ou por que foi marcado como NEUTRO)"
 }
 
-Analise velas, volume, tendência, suportes e resistências visíveis. O nome do ativo e preço devem ser lidos diretamente do gráfico.`;
+REGRA DE OURO: Na dúvida, marque como NEUTRO. É melhor não gerar sinal do que gerar um sinal errado. O nome do ativo e preço devem ser lidos diretamente do gráfico.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

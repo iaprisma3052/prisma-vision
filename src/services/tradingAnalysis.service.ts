@@ -11,6 +11,14 @@ export interface ForceArrow {
   valor: number;
 }
 
+export interface FiltrosDetectados {
+  lta_ltb_proximo: boolean;
+  exaustao_detectada: boolean;
+  vela_descanso: boolean;
+  lateralizacao: boolean;
+  tendencia_atual: 'ALTA' | 'BAIXA' | 'LATERAL';
+}
+
 export interface TradingAnalysis {
   ativo: string;
   preco: string | null;
@@ -20,6 +28,7 @@ export interface TradingAnalysis {
   intensidade: 'FORTE' | 'MODERADA' | 'FRACA';
   volume_bars: VolumeBar[];
   setas: ForceArrow[];
+  filtros_detectados?: FiltrosDetectados;
   resumo: string;
   timestamp: Date;
 }

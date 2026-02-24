@@ -37,8 +37,8 @@ export function PrismaVolumeForcePanel() {
           <p className="mt-6 text-muted-foreground font-mono text-xs">
             Inicie a captura e ative a PRISMA IA para visualizar sinais
           </p>
-          <p className="mt-2 text-muted-foreground/60 font-mono text-[10px]">
-            Sinais são gerados na abertura de cada vela de 1 minuto
+           <p className="mt-2 text-muted-foreground/60 font-mono text-[10px]">
+            Sinais são gerados entre 58-59s de cada vela de 1 minuto
           </p>
         </div>
       </div>
@@ -164,9 +164,33 @@ export function PrismaVolumeForcePanel() {
         </div>
       )}
 
+      {/* Filters Detected */}
+      {analysis.filtros_detectados && (
+        <div className="space-y-2">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Filtros Detectados</p>
+          <div className="flex flex-wrap gap-2">
+            {analysis.filtros_detectados.lta_ltb_proximo && (
+              <span className="px-3 py-1 rounded-full bg-neon-gold/10 text-neon-gold font-mono text-[10px] font-bold border border-neon-gold/30">LTA/LTB Próximo</span>
+            )}
+            {analysis.filtros_detectados.exaustao_detectada && (
+              <span className="px-3 py-1 rounded-full bg-neon-red/10 text-neon-red font-mono text-[10px] font-bold border border-neon-red/30">Exaustão</span>
+            )}
+            {analysis.filtros_detectados.vela_descanso && (
+              <span className="px-3 py-1 rounded-full bg-accent/10 text-accent font-mono text-[10px] font-bold border border-accent/30">Vela de Descanso</span>
+            )}
+            {analysis.filtros_detectados.lateralizacao && (
+              <span className="px-3 py-1 rounded-full bg-muted-foreground/10 text-muted-foreground font-mono text-[10px] font-bold border border-muted-foreground/30">Lateralização</span>
+            )}
+            <span className="px-3 py-1 rounded-full bg-secondary font-mono text-[10px] text-foreground border border-border">
+              Tendência: {analysis.filtros_detectados.tendencia_atual}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Summary */}
       {analysis.resumo && (
-        <div className="p-3 rounded-xl bg-secondary/50 border border-border">
+        <div className="p-3 rounded-2xl bg-secondary/50 border border-border">
           <p className="font-mono text-[11px] text-muted-foreground leading-relaxed">{analysis.resumo}</p>
         </div>
       )}
