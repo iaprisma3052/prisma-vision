@@ -11,11 +11,11 @@ const PowerBar = ({ label, value, type, segments = 20 }: PowerBarProps) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+        <span className="font-orbitron text-xs uppercase tracking-wider text-muted-foreground font-medium">
           {label}
         </span>
         <span
-          className={`font-mono text-sm font-semibold ${
+          className={`font-orbitron text-sm font-bold ${
             type === "bull" ? "text-neon-green" : "text-neon-red"
           }`}
         >

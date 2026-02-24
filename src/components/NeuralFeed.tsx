@@ -65,7 +65,7 @@ const NeuralFeed = ({ lines = 6 }: NeuralFeedProps) => {
       {feed.map((line, i) => (
         <p
           key={`${i}-${line}`}
-          className={`font-mono text-[11px] leading-relaxed transition-opacity duration-500 ${
+          className={`font-mono-code text-[11px] leading-relaxed transition-opacity duration-500 ${
             i === feed.length - 1
               ? "text-neon-green opacity-100"
               : "text-muted-foreground opacity-60"

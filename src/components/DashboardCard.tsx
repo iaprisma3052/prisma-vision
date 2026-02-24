@@ -11,7 +11,7 @@ const DashboardCard = ({ title, children, className = "" }: DashboardCardProps) 
     <div
       className={`rounded-2xl border border-border bg-card p-4 ${className}`}
     >
-      <h3 className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+      <h3 className="mb-3 font-orbitron text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-semibold">
         {title}
       </h3>
       {children}
