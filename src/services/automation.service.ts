@@ -44,14 +44,14 @@ class AutomationService {
 
     this.config.enabled = true;
     this.lastCandleMinute = -1;
-    console.log('🤖 PRISMA IA ativada - Sinais na abertura da vela de 1m (Horário de Brasília)');
+    console.log('🤖 PRISMA IA ativada - Sinais entre 58-59s da vela de 1m (Horário de Brasília)');
 
     this.candleCheckId = setInterval(() => {
       this.checkCandleOpening();
     }, 500);
 
     if (this.config.voiceEnabled) {
-      speechService.speakQuick('PRISMA IA ativada. Aguardando abertura da próxima vela.');
+      speechService.speakQuick('PRISMA IA ativada. Análise será feita entre 58 e 59 segundos de cada vela.');
     }
   }
 
@@ -63,9 +63,9 @@ class AutomationService {
     const currentMinute = brasiliaTime.getMinutes();
     const currentSecond = brasiliaTime.getSeconds();
 
-    if (currentSecond <= 2 && currentMinute !== this.lastCandleMinute) {
+    if (currentSecond >= 58 && currentSecond <= 59 && currentMinute !== this.lastCandleMinute) {
       this.lastCandleMinute = currentMinute;
-      console.log(`🕯️ Abertura de vela detectada: ${brasiliaTime.toLocaleTimeString('pt-BR')}`);
+      console.log(`🕯️ Análise pré-vela (${currentSecond}s): ${brasiliaTime.toLocaleTimeString('pt-BR')}`);
       this.performAnalysis();
     }
   }

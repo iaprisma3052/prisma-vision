@@ -160,7 +160,7 @@ export function PrismaControlPanel() {
 
       {/* Automation Controls */}
       <div className="space-y-2">
-        <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Sinal na Abertura da Vela (1m)</Label>
+        <Label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Sinal no Fechamento da Vela (58-59s)</Label>
         <div className="flex gap-2">
           {!isRunning ? (
             <Button
@@ -197,7 +197,7 @@ export function PrismaControlPanel() {
       {isRunning && (
         <div className="p-3 rounded-xl border border-neon-green/30 bg-neon-green/5">
           <p className="text-neon-green font-mono text-xs">
-            🤖 PRISMA IA ativa — Sinal gerado na abertura de cada vela de 1 minuto
+            🤖 PRISMA IA ativa — Sinal gerado entre 58-59s de cada vela de 1 minuto
           </p>
         </div>
       )}
