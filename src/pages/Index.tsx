@@ -4,6 +4,7 @@ import PowerBar from "@/components/PowerBar";
 import NeuralFeed from "@/components/NeuralFeed";
 import DashboardCard from "@/components/DashboardCard";
 import { PrismaControlPanel } from "@/components/PrismaControlPanel";
+import { SignalHistory } from "@/components/SignalHistory";
 import { PrismaVolumeForcePanel } from "@/components/PrismaVolumeForcePanel";
 import { useState, useEffect } from "react";
 import { Info } from "lucide-react";
@@ -74,18 +75,24 @@ const Index = () => {
           <DashboardCard title="Visão Neural — Feed">
             <NeuralFeed lines={6} />
           </DashboardCard>
+
+          <SignalHistory />
         </div>
       </div>
 
       {/* Footer */}
-       <footer className="mt-8 text-center">
+       <footer className="mt-8 text-center space-y-2">
          <p className="font-orbitron text-[10px] text-muted-foreground">
-           <span className="font-orbitron font-bold text-foreground">PRISMA IA</span> · Sinais no fechamento da vela de 1m (58-59s) ·{' '}
+           <span className="font-orbitron font-bold text-foreground">PRISMA IA</span> ·{' '}
            <span className="text-accent">Horário de Brasília</span>
          </p>
-         <p className="font-orbitron text-[9px] text-muted-foreground/60 mt-1">
+         <p className="font-orbitron text-[9px] text-muted-foreground/60">
            ⚠️ Para fins educacionais. Trading envolve riscos.
          </p>
+         <div className="flex items-center justify-center gap-1.5 mt-2">
+           <svg className="w-3.5 h-3.5 text-neon-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+           <span className="font-orbitron text-[9px] text-neon-green font-semibold">SSL Secured · Conexão Criptografada</span>
+         </div>
       </footer>
     </div>
   );
