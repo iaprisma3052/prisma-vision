@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { automationService } from '@/services/automation.service';
 import type { TradingAnalysis } from '@/services/tradingAnalysis.service';
 import { formatTime } from '@/lib/utils';
-import { ArrowUp, ArrowDown, Activity, Minus, Zap } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import PrismaLogo from '@/components/PrismaLogo';
 
 export function PrismaVolumeForcePanel() {
   const [analysis, setAnalysis] = useState<TradingAnalysis | null>(null);
@@ -24,16 +25,11 @@ export function PrismaVolumeForcePanel() {
     return (
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Activity className="w-5 h-5 text-accent" />
+          <PrismaLogo size={20} />
           <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">Sinais em Tempo Real</h3>
         </div>
         <div className="text-center py-16">
-          <div className="relative inline-block">
-            <Zap className="w-20 h-20 mx-auto text-accent/20" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-3 h-3 rounded-full bg-accent animate-pulse-glow" />
-            </div>
-          </div>
+          <PrismaLogo size={64} />
           <p className="mt-6 text-muted-foreground font-orbitron text-xs">
             Inicie a captura e ative a PRISMA IA para visualizar sinais
           </p>
@@ -52,7 +48,7 @@ export function PrismaVolumeForcePanel() {
     <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className="w-5 h-5 text-accent" />
+          <PrismaLogo size={20} />
           <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">Volume & Força</h3>
         </div>
         <div className="flex items-center gap-2">
