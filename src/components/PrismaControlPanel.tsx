@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -7,7 +6,8 @@ import { screenCaptureService } from '@/services/screenCapture.service';
 import { automationService } from '@/services/automation.service';
 import { speechService } from '@/services/speech.service';
 import { getSecondsUntilNextCandle, formatTime } from '@/lib/utils';
-import { Play, Square, Camera, Settings, Mic, MicOff, Clock, Zap } from 'lucide-react';
+import { Play, Square, Camera, Mic, MicOff, Clock, Zap } from 'lucide-react';
+import PrismaLogo from '@/components/PrismaLogo';
 
 export function PrismaControlPanel() {
   const [isCapturing, setIsCapturing] = useState(false);
@@ -89,10 +89,9 @@ export function PrismaControlPanel() {
   return (
     <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
       <div className="flex items-center gap-2">
-        <Settings className="w-5 h-5 text-accent" />
-        <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">Painel de Controle</h3>
+        <PrismaLogo size={20} />
+        <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">PRISMA IA</h3>
       </div>
-      <p className="font-orbitron text-[10px] text-muted-foreground">Configure e controle os sinais de trading</p>
 
       {/* Brasilia Time */}
       <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border">
@@ -160,7 +159,7 @@ export function PrismaControlPanel() {
 
       {/* Automation Controls */}
       <div className="space-y-2">
-        <Label className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Sinal no Fechamento da Vela (58-59s)</Label>
+        <Label className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Automação</Label>
         <div className="flex gap-2">
           {!isRunning ? (
             <Button
@@ -188,7 +187,7 @@ export function PrismaControlPanel() {
             className="rounded-xl font-orbitron text-xs"
           >
             <Zap className="w-4 h-4 mr-1" />
-            Analisar Agora
+            Analisar
           </Button>
         </div>
       </div>
@@ -197,7 +196,7 @@ export function PrismaControlPanel() {
       {isRunning && (
         <div className="p-3 rounded-xl border border-neon-green/30 bg-neon-green/5">
           <p className="text-neon-green font-orbitron text-xs">
-            🤖 PRISMA IA ativa — Sinal gerado entre 58-59s de cada vela de 1 minuto
+            🤖 PRISMA IA ativa
           </p>
         </div>
       )}

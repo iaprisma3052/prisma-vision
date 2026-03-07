@@ -31,9 +31,6 @@ const Index = () => {
             <h1 className="text-gradient-pink glow-pink font-orbitron text-2xl font-bold tracking-wider">
               PRISMA IA
             </h1>
-             <p className="font-orbitron text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-               Sistema de Visão Neural
-             </p>
           </div>
         </div>
         <SystemClock />
