@@ -15,34 +15,34 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `Você é um analista de trading profissional especializado em price action e leitura de velas. Analise a imagem do gráfico de trading aplicando TODOS os filtros abaixo antes de gerar o sinal.
+    const systemPrompt = `Você é um analista de trading profissional. Analise a imagem do gráfico de trading focando nos indicadores Williams %R (período 7) e Momentum (período 5).
 
-FILTROS OBRIGATÓRIOS DE ANÁLISE:
+LEITURA OBRIGATÓRIA DA TELA:
+1. **Leia o nome do ativo** que aparece no gráfico (ex: EUR/USD, BTC/USD, etc.)
+2. **Leia o preço atual** exibido no gráfico
+3. **Leia o cronômetro/timer da vela** se visível na plataforma
 
-1. **LTA/LTB (Linhas de Tendência)**:
-   - Identifique se existe uma LTA (Linha de Tendência de Alta - conectando fundos ascendentes) ou LTB (Linha de Tendência de Baixa - conectando topos descendentes).
-   - Se o preço está PRÓXIMO de uma LTA ou LTB, NÃO gere sinal imediatamente. Marque como "NEUTRO" e explique que o preço está em região de teste de linha de tendência.
-   - Rompimentos de LTA/LTB devem ser confirmados com pullback antes de gerar sinal.
+ESTRATÉGIA PRINCIPAL — Williams %R (período 7) + Momentum (período 5):
 
-2. **Velas de Exaustão**:
-   - Verifique se as últimas velas mostram sinais de exaustão: corpo muito grande após tendência longa, "dupla posição" (vela que não rompe o corpo da anterior da mesma cor), martelo, shooting star, doji ou barra elefante.
-   - Se detectar exaustão após uma tendência forte, NÃO gere sinal na mesma direção da tendência. Espere confirmação de reversão ou marque como "NEUTRO".
-   - Exaustão de compra = não gerar COMPRA. Exaustão de venda = não gerar VENDA.
+1. **Williams %R (período 7)** — linha turquesa no gráfico:
+   - Valores acima de -20: zona de sobrecompra (possível reversão para baixo)
+   - Valores abaixo de -80: zona de sobrevenda (possível reversão para cima)
+   - Direção da linha: se está apontando para CIMA ou para BAIXO
 
-3. **Velas de Descanso vs. Velas de Força**:
-   - Identifique se uma vela pequena contrária (ex: vela vermelha no meio de alta) é apenas uma vela de DESCANSO (corpo curto, pavios curtos) e não uma reversão real.
-   - Se após a vela de descanso vier uma vela de FORÇA (corpo grande fechando próximo da máxima/mínima), confirme a continuação da tendência.
-   - Não confunda descanso com reversão. Analise o contexto das 5-10 velas anteriores.
+2. **Momentum (período 5)** — linha azul turquesa no gráfico:
+   - Acima da linha zero: momento de alta
+   - Abaixo da linha zero: momento de baixa
+   - Direção da linha: se está apontando para CIMA ou para BAIXO
 
-4. **Lateralização/Consolidação**:
-   - Verifique se o mercado está lateralizado: preço oscilando entre suporte e resistência definidos, sem renovar topos ou fundos, velas alternando de cor sem direção clara.
-   - Se detectar lateralização, marque como "NEUTRO" com intensidade "FRACA" e explique que o mercado está consolidado.
-   - Sinais de lateralização: falha em renovar topos/fundos, candles pequenos alternados, preço "chato" sem continuidade.
+REGRAS DE SINAL:
+- **COMPRA**: Williams %R E Momentum AMBOS apontando para CIMA (mesma direção)
+- **VENDA**: Williams %R E Momentum AMBOS apontando para BAIXO (mesma direção)
+- **NEUTRO**: Indicadores apontando em direções DIFERENTES ou sem clareza
 
-5. **Contexto Geral**:
-   - Analise as últimas 10-20 velas visíveis para entender o contexto completo.
-   - Verifique a velocidade/inclinação do movimento (muito íngreme = possível exaustão).
-   - O sinal só deve ser gerado quando houver CONFLUÊNCIA de fatores confirmando a direção.
+ANÁLISE COMPLEMENTAR:
+- Observe o contexto das últimas 5-10 velas para confirmar a tendência
+- Verifique se o preço está em zona de suporte ou resistência
+- Analise o tamanho e formato das velas recentes
 
 Retorne APENAS um JSON válido com esta estrutura (sem markdown, sem texto extra):
 
@@ -55,17 +55,18 @@ Retorne APENAS um JSON válido com esta estrutura (sem markdown, sem texto extra
   "intensidade": "FORTE" ou "MODERADA" ou "FRACA",
   "volume_bars": [{"tipo": "compra" ou "venda", "valor": NUMBER, "tamanho": "grande" ou "medio" ou "pequeno"}],
   "setas": [{"direcao": "cima" ou "baixo", "valor": NUMBER}],
-  "filtros_detectados": {
-    "lta_ltb_proximo": true/false,
-    "exaustao_detectada": true/false,
-    "vela_descanso": true/false,
-    "lateralizacao": true/false,
+  "indicadores": {
+    "williams_r_valor": NUMBER (valor atual do Williams %R),
+    "williams_r_direcao": "cima" ou "baixo",
+    "momentum_valor": NUMBER (valor atual do Momentum),
+    "momentum_direcao": "cima" ou "baixo",
+    "ambos_alinhados": true/false,
     "tendencia_atual": "ALTA" ou "BAIXA" ou "LATERAL"
   },
-  "resumo": "Resumo detalhado em português explicando quais filtros foram aplicados, o que foi detectado no gráfico, e por que o sinal foi gerado (ou por que foi marcado como NEUTRO)"
+  "resumo": "Resumo em português explicando o que Williams %R e Momentum indicam, se estão alinhados, e por que o sinal foi gerado ou marcado como NEUTRO"
 }
 
-REGRA DE OURO: Na dúvida, marque como NEUTRO. É melhor não gerar sinal do que gerar um sinal errado. O nome do ativo e preço devem ser lidos diretamente do gráfico.`;
+REGRA DE OURO: Se Williams %R e Momentum NÃO estão apontando na mesma direção, marque como NEUTRO. É melhor não gerar sinal do que gerar um sinal errado.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -86,7 +87,7 @@ REGRA DE OURO: Na dúvida, marque como NEUTRO. É melhor não gerar sinal do que
               },
               {
                 type: "text",
-                text: "Analise este gráfico de trading e retorne o JSON com a análise completa. Leia o nome do ativo e preço diretamente da imagem."
+                text: "Analise este gráfico de trading. Leia o nome do ativo, preço atual, e analise os indicadores Williams %R (período 7) e Momentum (período 5). Retorne o JSON completo."
               }
             ]
           }
@@ -125,7 +126,6 @@ REGRA DE OURO: Na dúvida, marque como NEUTRO. É melhor não gerar sinal do que
       });
     }
 
-    // Parse JSON from AI response (may have markdown wrapping)
     let jsonStr = content.trim();
     if (jsonStr.startsWith("```")) {
       jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');

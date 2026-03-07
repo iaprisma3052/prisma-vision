@@ -33,9 +33,6 @@ export function PrismaVolumeForcePanel() {
           <p className="mt-6 text-muted-foreground font-orbitron text-xs">
             Inicie a captura e ative a PRISMA IA para visualizar sinais
           </p>
-           <p className="mt-2 text-muted-foreground/60 font-orbitron text-[10px]">
-            Sinais são gerados entre 58-59s de cada vela de 1 minuto
-          </p>
         </div>
       </div>
     );
@@ -49,7 +46,7 @@ export function PrismaVolumeForcePanel() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PrismaLogo size={20} />
-          <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">Volume & Força</h3>
+          <h3 className="font-orbitron text-sm font-bold tracking-wider text-foreground">Sinais em Tempo Real</h3>
         </div>
         <div className="flex items-center gap-2">
           <span className="font-orbitron text-[10px] text-muted-foreground">
@@ -116,69 +113,45 @@ export function PrismaVolumeForcePanel() {
         </div>
       </div>
 
-      {/* Arrows section */}
-      {analysis.setas && analysis.setas.length > 0 && (
-        <div className="space-y-2">
-          <p className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Setas de Força</p>
-          <div className="flex flex-wrap gap-2">
-            {analysis.setas.map((seta, i) => (
-              <div
-                key={i}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-orbitron text-xs font-bold ${
-                  seta.direcao === 'cima'
-                    ? 'bg-neon-green/10 text-neon-green'
-                    : 'bg-neon-red/10 text-neon-red'
-                }`}
-              >
-                {seta.direcao === 'cima' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                <span>{seta.valor}</span>
+      {/* Indicators - Williams %R + Momentum */}
+      {analysis.indicadores && (
+        <div className="space-y-3">
+          <p className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Indicadores</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 rounded-xl bg-secondary/50 border border-border">
+              <p className="font-orbitron text-[10px] text-muted-foreground mb-1">Williams %R (7)</p>
+              <div className="flex items-center gap-2">
+                {analysis.indicadores.williams_r_direcao === 'cima' ? (
+                  <ArrowUp className="w-4 h-4 text-neon-green" />
+                ) : (
+                  <ArrowDown className="w-4 h-4 text-neon-red" />
+                )}
+                <span className={`font-orbitron text-sm font-bold ${
+                  analysis.indicadores.williams_r_direcao === 'cima' ? 'text-neon-green' : 'text-neon-red'
+                }`}>{analysis.indicadores.williams_r_valor}</span>
               </div>
-            ))}
+            </div>
+            <div className="p-3 rounded-xl bg-secondary/50 border border-border">
+              <p className="font-orbitron text-[10px] text-muted-foreground mb-1">Momentum (5)</p>
+              <div className="flex items-center gap-2">
+                {analysis.indicadores.momentum_direcao === 'cima' ? (
+                  <ArrowUp className="w-4 h-4 text-neon-green" />
+                ) : (
+                  <ArrowDown className="w-4 h-4 text-neon-red" />
+                )}
+                <span className={`font-orbitron text-sm font-bold ${
+                  analysis.indicadores.momentum_direcao === 'cima' ? 'text-neon-green' : 'text-neon-red'
+                }`}>{analysis.indicadores.momentum_valor}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Volume Bars */}
-      {analysis.volume_bars && analysis.volume_bars.length > 0 && (
-        <div className="space-y-2">
-          <p className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Barras de Volume</p>
-          <div className="flex items-end gap-1 h-20">
-            {analysis.volume_bars.map((bar, i) => {
-              const height = bar.tamanho === 'grande' ? '100%' : bar.tamanho === 'medio' ? '60%' : '30%';
-              return (
-                <div
-                  key={i}
-                  className={`flex-1 rounded-t-2xl transition-all duration-500 ${
-                    bar.tipo === 'compra' ? 'bg-neon-green' : 'bg-neon-red'
-                  }`}
-                  style={{ height }}
-                  title={`${bar.tipo}: ${bar.valor}`}
-                />
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Filters Detected */}
-      {analysis.filtros_detectados && (
-        <div className="space-y-2">
-          <p className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Filtros Detectados</p>
-          <div className="flex flex-wrap gap-2">
-            {analysis.filtros_detectados.lta_ltb_proximo && (
-              <span className="px-3 py-1 rounded-full bg-neon-gold/10 text-neon-gold font-orbitron text-[10px] font-bold border border-neon-gold/30">LTA/LTB Próximo</span>
-            )}
-            {analysis.filtros_detectados.exaustao_detectada && (
-              <span className="px-3 py-1 rounded-full bg-neon-red/10 text-neon-red font-orbitron text-[10px] font-bold border border-neon-red/30">Exaustão</span>
-            )}
-            {analysis.filtros_detectados.vela_descanso && (
-              <span className="px-3 py-1 rounded-full bg-accent/10 text-accent font-orbitron text-[10px] font-bold border border-accent/30">Vela de Descanso</span>
-            )}
-            {analysis.filtros_detectados.lateralizacao && (
-              <span className="px-3 py-1 rounded-full bg-muted-foreground/10 text-muted-foreground font-orbitron text-[10px] font-bold border border-muted-foreground/30">Lateralização</span>
-            )}
-            <span className="px-3 py-1 rounded-full bg-secondary font-orbitron text-[10px] text-foreground border border-border">
-              Tendência: {analysis.filtros_detectados.tendencia_atual}
+          <div className={`flex items-center justify-center gap-2 p-2 rounded-xl ${
+            analysis.indicadores.ambos_alinhados ? 'bg-neon-green/10 border border-neon-green/20' : 'bg-secondary border border-border'
+          }`}>
+            <span className={`font-orbitron text-[10px] font-bold ${
+              analysis.indicadores.ambos_alinhados ? 'text-neon-green' : 'text-muted-foreground'
+            }`}>
+              {analysis.indicadores.ambos_alinhados ? '✓ Indicadores Alinhados' : '✗ Indicadores Divergentes'}
             </span>
           </div>
         </div>

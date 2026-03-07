@@ -11,11 +11,12 @@ export interface ForceArrow {
   valor: number;
 }
 
-export interface FiltrosDetectados {
-  lta_ltb_proximo: boolean;
-  exaustao_detectada: boolean;
-  vela_descanso: boolean;
-  lateralizacao: boolean;
+export interface IndicadoresDetectados {
+  williams_r_valor: number;
+  williams_r_direcao: 'cima' | 'baixo';
+  momentum_valor: number;
+  momentum_direcao: 'cima' | 'baixo';
+  ambos_alinhados: boolean;
   tendencia_atual: 'ALTA' | 'BAIXA' | 'LATERAL';
 }
 
@@ -28,7 +29,7 @@ export interface TradingAnalysis {
   intensidade: 'FORTE' | 'MODERADA' | 'FRACA';
   volume_bars: VolumeBar[];
   setas: ForceArrow[];
-  filtros_detectados?: FiltrosDetectados;
+  indicadores?: IndicadoresDetectados;
   resumo: string;
   timestamp: Date;
 }
