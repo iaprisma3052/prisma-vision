@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { automationService } from '@/services/automation.service';
 import type { TradingAnalysis } from '@/services/tradingAnalysis.service';
 import { formatTime } from '@/lib/utils';
-import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus, AlertTriangle } from 'lucide-react';
 import PrismaLogo from '@/components/PrismaLogo';
 
 export function PrismaVolumeForcePanel() {
@@ -86,7 +86,31 @@ export function PrismaVolumeForcePanel() {
         {analysis.preco && (
           <p className="mt-3 font-orbitron text-xl text-foreground font-bold">{analysis.preco}</p>
         )}
+        {typeof analysis.confianca === 'number' && (
+          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20">
+            <span className="font-orbitron text-[10px] text-muted-foreground">Confiança</span>
+            <span className={`font-orbitron text-sm font-bold ${
+              analysis.confianca >= 75 ? 'text-neon-green' :
+              analysis.confianca >= 45 ? 'text-accent' : 'text-neon-red'
+            }`}>{analysis.confianca}%</span>
+          </div>
+        )}
       </div>
+
+      {/* Alerta condição do ativo */}
+      {analysis.alerta_trocar_ativo && (
+        <div className="flex items-start gap-2 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+          <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-orbitron text-[11px] font-bold text-amber-300">
+              Ativo {analysis.condicao_ativo} — Recomendado trocar de ativo
+            </p>
+            {analysis.motivo_alerta && (
+              <p className="font-orbitron text-[10px] text-amber-200/80 mt-0.5 leading-snug">{analysis.motivo_alerta}</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Force Bars */}
       <div className="space-y-3">
