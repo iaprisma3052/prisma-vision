@@ -18,6 +18,13 @@ export interface IndicadoresDetectados {
   momentum_direcao: 'cima' | 'baixo';
   ambos_alinhados: boolean;
   tendencia_atual: 'ALTA' | 'BAIXA' | 'LATERAL';
+  rsi?: number;
+  macd?: 'ALTA' | 'BAIXA' | 'NEUTRO';
+  bb?: 'SUPERIOR' | 'MEIO' | 'INFERIOR';
+  ema20?: 'ACIMA' | 'ABAIXO' | 'CRUZANDO';
+  stochastic?: number;
+  adx?: number;
+  atr?: number;
 }
 
 export interface TradingAnalysis {
@@ -27,9 +34,14 @@ export interface TradingAnalysis {
   forca_vendedora: number;
   direcao: 'COMPRA' | 'VENDA' | 'NEUTRO';
   intensidade: 'FORTE' | 'MODERADA' | 'FRACA';
+  confianca?: number;
   volume_bars: VolumeBar[];
   setas: ForceArrow[];
   indicadores?: IndicadoresDetectados;
+  padroes_detectados?: string[];
+  condicao_ativo?: 'SAUDAVEL' | 'VOLATIL' | 'LATERAL' | 'FUROS';
+  alerta_trocar_ativo?: boolean;
+  motivo_alerta?: string;
   resumo: string;
   timestamp: Date;
 }
