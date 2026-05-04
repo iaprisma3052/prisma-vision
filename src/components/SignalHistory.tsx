@@ -1,42 +1,25 @@
 import { useState, useEffect } from 'react';
-import { automationService } from '@/services/automation.service';
-import type { TradingAnalysis } from '@/services/tradingAnalysis.service';
+import { tradingAnalysisService, type TradingAnalysis } from '@/services/tradingAnalysis.service';
 import { formatTime } from '@/lib/utils';
-import { ArrowUp, ArrowDown, Minus, History, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus, History, CheckCircle, XCircle, Trash2, AlertTriangle } from 'lucide-react';
 import PrismaLogo from '@/components/PrismaLogo';
 
-interface HistoryEntry {
-  id: string;
-  timestamp: Date;
-  ativo: string;
-  direcao: string;
-  intensidade: string;
-  preco?: string | null;
-  resultado?: 'win' | 'loss' | null;
-}
-
 export function SignalHistory() {
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [history, setHistory] = useState<TradingAnalysis[]>([]);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    automationService.onAnalysis((result: TradingAnalysis) => {
-      setHistory(prev => [{
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        timestamp: result.timestamp,
-        ativo: result.ativo || '---',
-        direcao: result.direcao,
-        intensidade: result.intensidade,
-        preco: result.preco,
-        resultado: null,
-      }, ...prev].slice(0, 50));
-    });
+    tradingAnalysisService.onHistoryChange((h) => setHistory(h));
   }, []);
 
   const markResult = (id: string, resultado: 'win' | 'loss') => {
-    setHistory(prev => prev.map(entry =>
-      entry.id === id ? { ...entry, resultado } : entry
-    ));
+    tradingAnalysisService.markResult(id, resultado);
+  };
+
+  const clearAll = () => {
+    if (confirm('Limpar todo o histórico de sinais?')) {
+      tradingAnalysisService.clearHistory();
+    }
   };
 
   const stats = {
@@ -47,6 +30,19 @@ export function SignalHistory() {
   const winRate = stats.wins + stats.losses > 0
     ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
     : 0;
+
+  // Assertividade por ativo
+  const assetStats: Record<string, { wins: number; losses: number; rate: number }> = {};
+  for (const h of history) {
+    const a = h.ativo || '---';
+    if (!assetStats[a]) assetStats[a] = { wins: 0, losses: 0, rate: 0 };
+    if (h.resultado === 'win') assetStats[a].wins++;
+    if (h.resultado === 'loss') assetStats[a].losses++;
+  }
+  Object.keys(assetStats).forEach(k => {
+    const s = assetStats[k];
+    s.rate = s.wins + s.losses > 0 ? Math.round((s.wins / (s.wins + s.losses)) * 100) : 0;
+  });
 
   if (!isOpen) {
     return (
@@ -77,15 +73,25 @@ export function SignalHistory() {
           <History className="w-5 h-5 text-accent" />
           <h3 className="font-orbitron text-sm font-bold text-foreground">Histórico de Sinais</h3>
         </div>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="font-orbitron text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Minimizar
-        </button>
+        <div className="flex items-center gap-3">
+          {history.length > 0 && (
+            <button
+              onClick={clearAll}
+              className="flex items-center gap-1 font-orbitron text-[10px] text-neon-red hover:text-neon-red/80 transition-colors"
+            >
+              <Trash2 className="w-3 h-3" /> Limpar
+            </button>
+          )}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="font-orbitron text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Minimizar
+          </button>
+        </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats globais */}
       {stats.wins + stats.losses > 0 && (
         <div className="grid grid-cols-3 gap-2">
           <div className="p-2 rounded-xl bg-neon-green/10 border border-neon-green/20 text-center">
@@ -103,13 +109,35 @@ export function SignalHistory() {
         </div>
       )}
 
+      {/* Assertividade por ativo */}
+      {Object.keys(assetStats).filter(k => assetStats[k].wins + assetStats[k].losses > 0).length > 0 && (
+        <div className="space-y-2">
+          <p className="font-orbitron text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Assertividade por Ativo</p>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.entries(assetStats)
+              .filter(([, s]) => s.wins + s.losses > 0)
+              .sort((a, b) => b[1].rate - a[1].rate)
+              .slice(0, 6)
+              .map(([ativo, s]) => (
+                <div key={ativo} className={`p-2 rounded-xl border ${s.rate >= 60 ? 'border-neon-green/20 bg-neon-green/5' : s.rate >= 40 ? 'border-border bg-secondary/30' : 'border-neon-red/20 bg-neon-red/5'}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-orbitron text-[10px] font-bold text-foreground truncate">{ativo}</span>
+                    <span className={`font-orbitron text-[11px] font-bold ${s.rate >= 60 ? 'text-neon-green' : s.rate >= 40 ? 'text-foreground' : 'text-neon-red'}`}>{s.rate}%</span>
+                  </div>
+                  <p className="font-orbitron text-[9px] text-muted-foreground">{s.wins}W / {s.losses}L</p>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       {history.length === 0 ? (
         <div className="text-center py-8">
           <PrismaLogo size={32} />
           <p className="mt-3 font-orbitron text-xs text-muted-foreground">Nenhum sinal gerado ainda</p>
         </div>
       ) : (
-        <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+        <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
           {history.map((entry) => (
             <div
               key={entry.id}
@@ -137,6 +165,9 @@ export function SignalHistory() {
                       'text-foreground'
                     }`}>{entry.direcao}</span>
                     <span className="font-orbitron text-[10px] text-muted-foreground ml-2">{entry.intensidade}</span>
+                    {typeof entry.confianca === 'number' && (
+                      <span className="font-orbitron text-[10px] text-accent ml-2">{entry.confianca}%</span>
+                    )}
                   </div>
                 </div>
                 <div className="text-right">
@@ -146,7 +177,15 @@ export function SignalHistory() {
                 </div>
               </div>
 
-              {/* WIN/LOSS Buttons */}
+              {entry.alerta_trocar_ativo && (
+                <div className="mt-2 flex items-start gap-1.5 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <p className="font-orbitron text-[10px] text-amber-300 leading-snug">
+                    {entry.motivo_alerta || `Ativo ${entry.condicao_ativo}. Considere trocar de ativo.`}
+                  </p>
+                </div>
+              )}
+
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/50">
                 {entry.resultado ? (
                   <span className={`font-orbitron text-[10px] font-bold flex items-center gap-1 ${
@@ -158,13 +197,13 @@ export function SignalHistory() {
                 ) : (
                   <>
                     <button
-                      onClick={() => markResult(entry.id, 'win')}
+                      onClick={() => markResult(entry.id!, 'win')}
                       className="flex items-center gap-1 px-3 py-1 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green font-orbitron text-[10px] font-bold hover:bg-neon-green/20 transition-colors"
                     >
                       <CheckCircle className="w-3 h-3" /> WIN
                     </button>
                     <button
-                      onClick={() => markResult(entry.id, 'loss')}
+                      onClick={() => markResult(entry.id!, 'loss')}
                       className="flex items-center gap-1 px-3 py-1 rounded-full bg-neon-red/10 border border-neon-red/30 text-neon-red font-orbitron text-[10px] font-bold hover:bg-neon-red/20 transition-colors"
                     >
                       <XCircle className="w-3 h-3" /> LOSS
