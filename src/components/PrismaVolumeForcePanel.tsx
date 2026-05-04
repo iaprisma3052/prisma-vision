@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { automationService } from '@/services/automation.service';
 import type { TradingAnalysis } from '@/services/tradingAnalysis.service';
 import { formatTime } from '@/lib/utils';
-import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { ArrowUp, ArrowDown, Minus, AlertTriangle } from 'lucide-react';
 import PrismaLogo from '@/components/PrismaLogo';
 
 export function PrismaVolumeForcePanel() {
