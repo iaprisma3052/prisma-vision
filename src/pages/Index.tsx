@@ -1,26 +1,11 @@
 import PrismaLogo from "@/components/PrismaLogo";
 import SystemClock from "@/components/SystemClock";
-import PowerBar from "@/components/PowerBar";
-import NeuralFeed from "@/components/NeuralFeed";
-import DashboardCard from "@/components/DashboardCard";
 import { PrismaControlPanel } from "@/components/PrismaControlPanel";
 import { SignalHistory } from "@/components/SignalHistory";
 import { PrismaVolumeForcePanel } from "@/components/PrismaVolumeForcePanel";
-import { useState, useEffect } from "react";
 import { Info } from "lucide-react";
 
 const Index = () => {
-  const [bullPower, setBullPower] = useState(72);
-  const [bearPower, setBearPower] = useState(28);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBullPower(Math.floor(50 + Math.random() * 40));
-      setBearPower(Math.floor(10 + Math.random() * 40));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="min-h-screen p-4 md:p-6">
       {/* Header */}
@@ -56,23 +41,11 @@ const Index = () => {
         {/* Left Column - Control Panel */}
         <div className="space-y-4">
           <PrismaControlPanel />
-
-          <DashboardCard title="Prisma IA Power">
-            <div className="space-y-4">
-              <PowerBar label="Touros" value={bullPower} type="bull" />
-              <PowerBar label="Ursos" value={bearPower} type="bear" />
-            </div>
-          </DashboardCard>
         </div>
 
         {/* Center + Right - Signals */}
         <div className="md:col-span-2 space-y-4">
           <PrismaVolumeForcePanel />
-
-          <DashboardCard title="Visão Neural — Feed">
-            <NeuralFeed lines={6} />
-          </DashboardCard>
-
           <SignalHistory />
         </div>
       </div>
