@@ -41,23 +41,11 @@ const Index = () => {
         {/* Left Column - Control Panel */}
         <div className="space-y-4">
           <PrismaControlPanel />
-
-          <DashboardCard title="Prisma IA Power">
-            <div className="space-y-4">
-              <PowerBar label="Touros" value={bullPower} type="bull" />
-              <PowerBar label="Ursos" value={bearPower} type="bear" />
-            </div>
-          </DashboardCard>
         </div>
 
         {/* Center + Right - Signals */}
         <div className="md:col-span-2 space-y-4">
           <PrismaVolumeForcePanel />
-
-          <DashboardCard title="Visão Neural — Feed">
-            <NeuralFeed lines={6} />
-          </DashboardCard>
-
           <SignalHistory />
         </div>
       </div>
